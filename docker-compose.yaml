@@ -1,0 +1,55 @@
+services:
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    networks:
+      - monitoring-net
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - monitoring-net
+
+  node-exporter:
+    image: prom/node-exporter
+    restart: unless-stopped
+    pid: host
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($$|/)"
+    networks:
+      - monitoring-net
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+    networks:
+      - monitoring-net
+
+  loki:
+    image: grafana/loki
+    ports:
+      - "3100:3100"
+    restart: unless-stopped
+    networks:
+      - monitoring-net
+
+networks:
+  monitoring-net:
+    driver: bridge
