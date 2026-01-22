@@ -3,7 +3,7 @@
 
 ### 1. Развёртывание системы мониторинга
 - Установлен Docker Compose
-- Настроены сервисы: Spring Boot, Prometheus, Grafana, Loki, Node Exporter
+- Настроены сервисы: Prometheus, Grafana, Loki, Node Exporter
 
 ### 2. Конфигурация
 - Создан `docker-compose.yml` для оркестрации контейнеров
